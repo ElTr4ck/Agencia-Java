@@ -13,8 +13,6 @@ public class SucursalDAO {
             String sql = "INSERT INTO Sucursal (nombre) VALUES (?)";
             try (PreparedStatement statement = conexion.prepareStatement(sql)) {
                 statement.setString(1, sucursal.getNombre());
-                statement.executeUpdate();
-
                 int filasAfectadas = statement.executeUpdate();
                 if (filasAfectadas > 0) {
                     System.out.println("Inserción exitosa. Filas afectadas: " + filasAfectadas);
@@ -58,9 +56,11 @@ public class SucursalDAO {
                     }
                 }
             }
-        } catch (SQLException e) {
+        } 
+        catch (SQLException e) {
             e.printStackTrace();
         }
+        
         return sucursales;
     }
 }

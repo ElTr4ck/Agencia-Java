@@ -6,6 +6,7 @@
 package agencia;
 
 import java.time.LocalDate;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
@@ -24,9 +25,10 @@ public class PnlAgServ extends javax.swing.JPanel
     public PnlAgServ()
     {
         initComponents();
-        for (int i = 0; i < IntrPrincipal.getSuc().size(); i++)
+        List<Sucursal> sucursalesDisponibles = SucursalDAO.desplegarTodasLasSucursales();
+        for (int i = 0; i < sucursalesDisponibles.size(); i++)
         {
-            desSuc.addItem(IntrPrincipal.getSuc().get(i));
+            desSuc.addItem(sucursalesDisponibles.get(i).getNombre());
         }
         re.setBorder(modAuto.getBorder());
     }
@@ -447,22 +449,52 @@ public class PnlAgServ extends javax.swing.JPanel
                     && Validaciones.pinError(tipServ, menErrorTS, "Ingresa el tipo de servicio.", "Llenar el campo de texto", false)
                     && Validaciones.pinError(prsu, menErrorPr, "$$$$$", "Llenar el campo de texto", false))
             {
-                IntrPrincipal.getAut().get(desSuc.getSelectedIndex()).add(new Servicio(tipServ.getText(),
+                /*IntrPrincipal.getAut().get(desSuc.getSelectedIndex()).add(new Servicio(tipServ.getText(),
                         Integer.parseInt(prsu.getText()), ((String) pag.getSelectedItem()).toCharArray(),
-                        modAuto.getText(), Integer.parseInt(anioAuto.getText()), placas.getText()));
-                JOptionPane.showMessageDialog(this, "Se registro con exito el auto", "Exito", JOptionPane.INFORMATION_MESSAGE);
-                modAuto.setText("");
-                modAutoFocusLost(null);
-                anioAuto.setText("");
-                anioAutoFocusLost(null);
-                placas.setText("");
-                placasFocusLost(null);
-                tipServ.setText("");
-                tipServFocusLost(null);
-                prsu.setText("");
-                prsuFocusLost(null);
-                pag.setSelectedIndex(0);
-                btnAg.requestFocus();
+                        modAuto.getText(), Integer.parseInt(anioAuto.getText()), placas.getText()));*/
+                
+                // Crear un objeto Auto con los datos ingresados
+                Sucursal sucSel = new Sucursal(desSuc.getSelectedItem().toString());
+                
+                Auto auto = new Auto(
+                        modAuto.getText(),
+                        Integer.parseInt(anioAuto.getText()),
+                        placas.getText(),
+                        sucSel
+                );
+                if(!AutoDAO.guardarAuto(auto)){
+                    JOptionPane.showMessageDialog(this, "No se pudo registrar el auto correctamente");
+                }
+                else{
+                    boolean pagado;
+                    if("SI".equals(pag.getSelectedItem().toString()))
+                        pagado = true;
+                    else
+                        pagado = false;
+                    
+                    if(ServicioDAO.guardarServicio(tipServ.getText(), pagado, Integer.parseInt(prsu.getText()), auto.getPlacas())){
+                        JOptionPane.showMessageDialog(this, "Se registro con exito el auto y el servicio", "Exito", JOptionPane.INFORMATION_MESSAGE);
+                        modAuto.setText("");
+                        modAutoFocusLost(null);
+                        anioAuto.setText("");
+                        anioAutoFocusLost(null);
+                        placas.setText("");
+                        placasFocusLost(null);
+                        tipServ.setText("");
+                        tipServFocusLost(null);
+                        prsu.setText("");
+                        prsuFocusLost(null);
+                        pag.setSelectedIndex(0);
+                        btnAg.requestFocus();
+                    }
+                    else{
+                        JOptionPane.showMessageDialog(this, "No se pudo registrar el servicio correctamente");
+                    }
+                }
+                System.out.println("Después de llamar a guardarAuto");
+
+                System.out.println("Antes de llamar a guardarAuto");
+                
             }
         }else
         {

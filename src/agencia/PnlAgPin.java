@@ -138,12 +138,17 @@ public class PnlAgPin extends javax.swing.JPanel
                 colorAFocusLost(evt);
             }
         });
-        colorA.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                colorAKeyTyped(evt);
+        colorA.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                colorAActionPerformed(evt);
             }
+        });
+        colorA.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 colorAKeyPressed(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                colorAKeyTyped(evt);
             }
         });
 
@@ -152,7 +157,7 @@ public class PnlAgPin extends javax.swing.JPanel
         btnAg.setText("Agregar");
         btnAg.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 255), 1, true));
         btnAg.setBorderPainted(false);
-        btnAg.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnAg.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnAg.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAgActionPerformed(evt);
@@ -377,22 +382,31 @@ public class PnlAgPin extends javax.swing.JPanel
                System.out.println("Antes de llamar a guardarAuto");
 
                 // Guardar el auto en la base de datos
-                AutoDAO.guardarAuto(auto);
-
+                if(!AutoDAO.guardarAuto(auto)){
+                    JOptionPane.showMessageDialog(this, "No se pudo registrar el auto correctamente");
+                }
+                else{
+                    if(PinturaDAO.guardarPintura(colorA.getText(), auto.getPlacas())){
+                        JOptionPane.showMessageDialog(this, "Se registro con exito el auto y su pintura", "Exito", JOptionPane.INFORMATION_MESSAGE);
+                        modAuto.setText("");
+                        modAutoFocusLost(null);
+                        anioAuto.setText("");
+                        anioAutoFocusLost(null);
+                        placas.setText("");
+                        placasFocusLost(null);
+                        colorA.setText("");
+                        colorAFocusLost(null);
+                        fechaSalida.setText(tanFech("" + todaysDate));
+                        btnAg.requestFocus();
+                    }
+                    else{
+                        JOptionPane.showMessageDialog(this, "No se pudo registrar la pintura correctamente");
+                    }
+                }
                 System.out.println("Después de llamar a guardarAuto");
             
-                IntrPrincipal.getAut().get(desSuc.getSelectedIndex()).add(new Pintura(fecha.getText(), colorA.getText(), fechaSalida.getText(), modAuto.getText(), Integer.parseInt(anioAuto.getText()), placas.getText(), sucSel));
-                JOptionPane.showMessageDialog(this, "Se registro con exito el auto", "Exito", JOptionPane.INFORMATION_MESSAGE);
-                modAuto.setText("");
-                modAutoFocusLost(null);
-                anioAuto.setText("");
-                anioAutoFocusLost(null);
-                placas.setText("");
-                placasFocusLost(null);
-                colorA.setText("");
-                colorAFocusLost(null);
-                fechaSalida.setText(tanFech("" + todaysDate));
-                btnAg.requestFocus();
+                //IntrPrincipal.getAut().get(desSuc.getSelectedIndex()).add(new Pintura(fecha.getText(), colorA.getText(), fechaSalida.getText(), modAuto.getText(), Integer.parseInt(anioAuto.getText()), placas.getText(), sucSel))
+                
             }
         }else
         {
@@ -591,6 +605,10 @@ public class PnlAgPin extends javax.swing.JPanel
             colorA.setForeground(new java.awt.Color(0, 0, 0));
         }
     }//GEN-LAST:event_colorAFocusGained
+
+    private void colorAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorAActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_colorAActionPerformed
 
     private String tanFech(String s)
     {

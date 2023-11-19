@@ -7,8 +7,8 @@ import java.sql.SQLException;
 public class ConexBD {
     private static Connection conexion;
 
-    public static Connection obtenerConexion() {
-        if (conexion == null) {
+    public static Connection obtenerConexion() throws SQLException {
+        if (conexion == null || conexion.isClosed()) {
             try {
                 // Cargar el controlador JDBC
                 Class.forName("com.mysql.cj.jdbc.Driver");
