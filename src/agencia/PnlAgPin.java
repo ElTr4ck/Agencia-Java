@@ -7,6 +7,7 @@ package agencia;
 
 import java.awt.Color;
 import java.time.LocalDate;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
@@ -26,9 +27,10 @@ public class PnlAgPin extends javax.swing.JPanel
     public PnlAgPin()
     {
         initComponents();
-        for (int i = 0; i < IntrPrincipal.getSuc().size(); i++)
+        List<Sucursal> sucursalesDisponibles = SucursalDAO.desplegarTodasLasSucursales();
+        for (int i = 0; i < sucursalesDisponibles.size(); i++)
         {
-            desSuc.addItem(IntrPrincipal.getSuc().get(i));
+            desSuc.addItem(sucursalesDisponibles.get(i).getNombre());
         }
         fecha.setText("" + todaysDate);
         fechaSalida.setText(tanFech("" + todaysDate));
@@ -363,11 +365,13 @@ public class PnlAgPin extends javax.swing.JPanel
                     && Validaciones.pinError(colorA, menErrorC, "Ingrese un color.", "Llenar el campo de texto", false) || false)
             {
                 // Crear un objeto Auto con los datos ingresados
+                Sucursal sucSel = new Sucursal(desSuc.getSelectedItem().toString());
+                
                 Auto auto = new Auto(
-                    modAuto.getText(),
-                    Integer.parseInt(anioAuto.getText()),
-                    placas.getText()
-                    sucursal.
+                        modAuto.getText(),
+                        Integer.parseInt(anioAuto.getText()),
+                        placas.getText(),
+                        sucSel
                 );
 
                System.out.println("Antes de llamar a guardarAuto");
@@ -377,7 +381,7 @@ public class PnlAgPin extends javax.swing.JPanel
 
                 System.out.println("Después de llamar a guardarAuto");
             
-                IntrPrincipal.getAut().get(desSuc.getSelectedIndex()).add(new Pintura(fecha.getText(), colorA.getText(), fechaSalida.getText(), modAuto.getText(), Integer.parseInt(anioAuto.getText()), placas.getText()));
+                IntrPrincipal.getAut().get(desSuc.getSelectedIndex()).add(new Pintura(fecha.getText(), colorA.getText(), fechaSalida.getText(), modAuto.getText(), Integer.parseInt(anioAuto.getText()), placas.getText(), sucSel));
                 JOptionPane.showMessageDialog(this, "Se registro con exito el auto", "Exito", JOptionPane.INFORMATION_MESSAGE);
                 modAuto.setText("");
                 modAutoFocusLost(null);

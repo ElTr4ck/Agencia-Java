@@ -148,8 +148,10 @@ public class PnlRegSuc extends javax.swing.JPanel
     {//GEN-HEADEREND:event_btnRegistrarActionPerformed
         if (Validaciones.valPal(nomSuc.getText()) && !nomSuc.getText().equals("Ingresa el nombre de la sucursal."))
         {
-            IntrPrincipal.getSuc().add(nomSuc.getText());
-            IntrPrincipal.getAut().add(new ArrayList<Auto>());
+            Sucursal suc = new Sucursal(nomSuc.getText());
+            SucursalDAO.guardarSucursal(suc);
+            //IntrPrincipal.getSuc().add(nomSuc.getText());
+            //IntrPrincipal.getAut().add(new ArrayList<Auto>());
             menError.setText("");
             nomSuc.setText("");
             nomSucFocusLost(null);

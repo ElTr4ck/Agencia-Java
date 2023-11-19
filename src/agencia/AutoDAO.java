@@ -10,12 +10,12 @@ import java.util.List;
 public class AutoDAO {
     public static void guardarAuto(Auto auto) {
         try (Connection conexion = ConexBD.obtenerConexion()) {
-            String sql = "INSERT INTO Auto (placa, modelo, anio, sucursal_nombre) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO Auto (placa, modelo, anio, sucursal_nombre) VALUES (?, ?, ?, ?)";
             try (PreparedStatement statement = conexion.prepareStatement(sql)) {
                 statement.setString(1, auto.getPlacas());
                 statement.setString(2, auto.getModelo());
                 statement.setInt(3, auto.getAnio());
-                statement.setString(4, auto.getSucursalNombre());
+                statement.setString(4, auto.getSucursal().toString());
                 statement.executeUpdate();
 
                 int filasAfectadas = statement.executeUpdate();
@@ -59,7 +59,8 @@ public class AutoDAO {
                         int anio = resultSet.getInt("anio");
                         String color = resultSet.getString("color");
                         String sucursalNombre = resultSet.getString("sucursal_nombre");
-                        auto = new Auto(modelo, anio, placas, sucursalNombre);
+                        Sucursal sucReg = new Sucursal(sucursalNombre);
+                        auto = new Auto(modelo, anio, placas, sucReg);
                     }
                 }
             }
@@ -81,7 +82,8 @@ public class AutoDAO {
                     String placas = resultSet.getString("placa");
                     String color = resultSet.getString("color");
                     String sucursalNombre = resultSet.getString("sucursal_nombre");
-                    Auto auto = new Auto(modelo, anio, placas, sucursalNombre);
+                    Sucursal sucReg = new Sucursal(sucursalNombre);
+                    Auto auto = new Auto(modelo, anio, placas, sucReg);
                     autos.add(auto);
                 }
             }

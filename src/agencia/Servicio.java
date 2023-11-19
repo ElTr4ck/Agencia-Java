@@ -17,9 +17,9 @@ public class Servicio extends Auto implements Serializable
     private int presupuesto;
     private char[] pagado;
 
-    public Servicio(String tipoServicio, int presupuesto, char[] pagado, String modelo, int anio, String placas)
+    public Servicio(String tipoServicio, int presupuesto, char[] pagado, String modelo, int anio, String placas, Sucursal sucursal)
     {
-        super(modelo, anio, placas);
+        super(modelo, anio, placas, sucursal);
         this.tipoServicio = tipoServicio;
         this.presupuesto = presupuesto;
         this.pagado = pagado;

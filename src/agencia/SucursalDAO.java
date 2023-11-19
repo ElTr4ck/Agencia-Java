@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SucursalDAO {
     public static void guardarSucursal(Sucursal sucursal) {
@@ -43,20 +45,22 @@ public class SucursalDAO {
         return sucursal;
     }
 
-    public static void desplegarTodasLasSucursales() {
+    public static List<Sucursal> desplegarTodasLasSucursales() {
+        List<Sucursal> sucursales = new ArrayList<>();
         try (Connection conexion = ConexBD.obtenerConexion()) {
             String sql = "SELECT * FROM Sucursal";
             try (PreparedStatement statement = conexion.prepareStatement(sql)) {
                 try (ResultSet resultSet = statement.executeQuery()) {
                     while (resultSet.next()) {
-                        String nombre = resultSet.getString("nombre");
-                        Sucursal sucursal = new Sucursal(nombre);
-                        System.out.println(sucursal);
+                    String sucursalNombre = resultSet.getString("nombre");
+                    Sucursal sucReg = new Sucursal(sucursalNombre);
+                    sucursales.add(sucReg);
                     }
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return sucursales;
     }
 }

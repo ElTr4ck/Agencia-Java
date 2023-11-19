@@ -22,7 +22,7 @@ public class Pintura extends Auto implements Serializable
     {
     }
 
-    public Pintura(String fechaIngreso, String color, String fechaSalida, String modelo, int anio, String placas)
+    public Pintura(String fechaIngreso, String color, String fechaSalida, String modelo, int anio, String placas, Sucursal sucursal)
     {
         super(modelo, anio, placas,sucursal);
         this.fechaIngreso = fechaIngreso;
