@@ -8,6 +8,7 @@ package agencia;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JSeparator;
 import javax.swing.table.TableColumnModel;
@@ -31,26 +32,25 @@ public class PnlMosT extends javax.swing.JPanel
 
     private void mos()
     {
-        for (int i = 0; i < IntrPrincipal.getSuc().size(); i++)
-        {
-            JLabel sucur = new JLabel("<html>Sucursal: <p>" + IntrPrincipal.getSuc().get(i)
+        List<Sucursal> sucursalesDisponibles = SucursalDAO.desplegarTodasLasSucursales();
+        for(int i = 0; i < sucursalesDisponibles.size(); i++){
+            JLabel sucur = new JLabel("<html>Sucursal: <p>" + sucursalesDisponibles.get(i).getNombre()
                     + "<html>", new javax.swing.ImageIcon(getClass().getResource("/imagenes/department-48_44780.png")),
                     javax.swing.SwingConstants.CENTER);
             sucur.setBackground(new java.awt.Color(226, 222, 219));
             sucur.setOpaque(true);
             sucur.setFont(new java.awt.Font("Tahoma", 1, 12));
             mostrarTodo.add(sucur);
-            for (int j = 0; j < IntrPrincipal.getAut().get(i).size(); j++)
-            {
-                if (IntrPrincipal.getAut().get(i).get(j) instanceof Pintura)
-                {
-                    JLabel lab = new JLabel("<html>Sucursal: <p>" + IntrPrincipal.getSuc().get(i)
-                            + "<p>Placas: <p>" + ((Auto) IntrPrincipal.getAut().get(i).get(j)).getPlacas()
-                            + "<p>Modelo: <p>" + ((Auto) IntrPrincipal.getAut().get(i).get(j)).getModelo()
-                            + "<p>Año:<p>" + ((Auto) IntrPrincipal.getAut().get(i).get(j)).getAnio()
-                            + "<p>Color:<p>" + ((Pintura) IntrPrincipal.getAut().get(i).get(j)).getColor()
-                            + "<p>Fecha de ingreso:<p>" + ((Pintura) IntrPrincipal.getAut().get(i).get(j)).getFechaIngreso()
-                            + "<p>Fecha de salida:<p>" + ((Pintura) IntrPrincipal.getAut().get(i).get(j)).getFechaSalida()
+            List<Auto> autos = AutoDAO.obtenerAutosPorSucursal(sucursalesDisponibles.get(i).getNombre());
+            for (int j = 0; j < autos.size(); j++){
+                if (PinturaDAO.verificarExistenciaAuto(autos.get(j).getPlacas())){
+                    JLabel lab = new JLabel("<html>Sucursal: <p>" + sucursalesDisponibles.get(i).getNombre()
+                            + "<p>Placas: <p>" + autos.get(j).getPlacas()
+                            + "<p>Modelo: <p>" + autos.get(j).getModelo()
+                            + "<p>Año:<p>" + autos.get(j).getAnio()
+                            + "<p>Color:<p>" + PinturaDAO.obtenerPintura(autos.get(j).getPlacas())
+                            + "<p>Fecha de ingreso:<p>" + PinturaDAO.obtenerFechaEntrada(autos.get(j).getPlacas())
+                            + "<p>Fecha de salida:<p>" + PinturaDAO.obtenerFechaSalida(autos.get(j).getPlacas())
                             + "<html>", new javax.swing.ImageIcon(getClass().getResource("/imagenes/icnPin.png")),
                             javax.swing.SwingConstants.CENTER);
                     //lab.setSize(200, 200);
@@ -58,16 +58,15 @@ public class PnlMosT extends javax.swing.JPanel
                     lab.setOpaque(true);
                     lab.setFont(new java.awt.Font("Tahoma", 1, 12));
                     mostrarTodo.add(lab);
-                } else
-                {
-                    JLabel lab = new JLabel("<html>Sucursal:<p>" + IntrPrincipal.getSuc().get(i)
-                            + "<p>Placas:<p>" + ((Auto) IntrPrincipal.getAut().get(i).get(j)).getPlacas()
-                            + "<p>Modelo:<p>" + ((Auto) IntrPrincipal.getAut().get(i).get(j)).getModelo()
-                            + "<p>Año:<p>" + ((Auto) IntrPrincipal.getAut().get(i).get(j)).getAnio()
-                            + "<p>Presupuesto:<p>" + ((Servicio) IntrPrincipal.getAut().get(i).get(j)).getPresupuesto()
-                            + "<p>Tip. de servicio:<p>" + ((Servicio) IntrPrincipal.getAut().get(i).get(j)).getTipoServicio()
-                            + "<p>Pagado:<p>" + ((Servicio) IntrPrincipal.getAut().get(i).get(j)).getPagado()[0]
-                            + ((Servicio) IntrPrincipal.getAut().get(i).get(j)).getPagado()[1] + "<html>",
+                } else{
+                    String pagadito = (ServicioDAO.isPagado(autos.get(j).getPlacas())) ? "SI" : "NO";
+                    JLabel lab = new JLabel("<html>Sucursal:<p>" + sucursalesDisponibles.get(i).getNombre()
+                            + "<p>Placas:<p>" + autos.get(j).getPlacas().toString()
+                            + "<p>Modelo:<p>" + autos.get(j).getModelo().toString()
+                            + "<p>Año:<p>" + autos.get(j).getAnio()
+                            + "<p>Presupuesto:<p>" + ServicioDAO.getPresupuesto(autos.get(j).getPlacas().toString())
+                            + "<p>Tip. de servicio:<p>" + ServicioDAO.obtenerTipo(autos.get(j).getPlacas().toString())
+                            + "<p>Pagado:<p>" + pagadito + "<html>",
                             new javax.swing.ImageIcon(getClass().getResource("/imagenes/icnRep.png")),
                             javax.swing.SwingConstants.CENTER);
                     //lab.setSize(200, 200);
@@ -77,13 +76,18 @@ public class PnlMosT extends javax.swing.JPanel
                     mostrarTodo.add(lab);
                 }
             }
-            for (int j = 0; j < ((IntrPrincipal.getAut().get(i).size()+1)%4==0?0:4-((IntrPrincipal.getAut().get(i).size()+1)%4)) ; j++)
+            for (int j = 0; j < ((autos.size()+1)%4==0?0:4-((autos.size()+1)%4)) ; j++)
             {
                 JLabel relleno = new JLabel();
                 relleno.setBackground(new java.awt.Color(0, 0, 0));
                 mostrarTodo.add(relleno);
             }
-        }   
+        }
+        
+        
+        
+            
+           
     }
 
     /**
