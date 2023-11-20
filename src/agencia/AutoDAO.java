@@ -98,4 +98,27 @@ public class AutoDAO {
         }
         return autos;
     }
+    
+    public static List<Auto> obtenerAutosPorSucursal(String SucurDada){
+        List<Auto> autos = new ArrayList<>();
+        try (Connection conexion = ConexBD.obtenerConexion()) {
+            String sql = "SELECT * FROM Auto WHERE sucursal_nombre = ?";
+            try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+                statement.setString(1, SucurDada);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        String modelo = resultSet.getString("modelo");
+                        int anio = resultSet.getInt("anio");
+                        String placas = resultSet.getString("placa");
+                        Sucursal sucReg = new Sucursal(SucurDada);
+                        Auto auto = new Auto(modelo, anio, placas, sucReg);
+                        autos.add(auto);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return autos;
+    }
 }
