@@ -83,5 +83,19 @@ public class ServicioDAO {
         }
         return presupuesto;
     }
-   
+    
+    public static boolean verificarExistenciaAuto (String placa){
+        try (Connection conexion = ConexBD.obtenerConexion()) {
+            String sql = "SELECT * FROM servicio where auto_placa = ?";
+            try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+                statement.setString(1, placa);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    return resultSet.next();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
