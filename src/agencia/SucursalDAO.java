@@ -63,4 +63,24 @@ public class SucursalDAO {
         
         return sucursales;
     }
+    
+    public static boolean eliminarSucursal(String nombreSuc){
+        try (Connection conexion = ConexBD.obtenerConexion()) {
+            String sql = "DELETE FROM sucursal WHERE nombre = ?";
+            try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+                statement.setString(1, nombreSuc);
+                int filasAfectadas = statement.executeUpdate();
+                if (filasAfectadas > 0) {
+                    System.out.println("Eliminación exitosa. Filas afectadas: " + filasAfectadas);
+                    return true;
+                } else {
+                    System.out.println("No se eliminó ninguna fila. Verifica tu sentencia SQL.");
+                    return false;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

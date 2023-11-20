@@ -138,7 +138,7 @@ public class PnlElmAut extends javax.swing.JPanel
     {//GEN-HEADEREND:event_btnElmActionPerformed
         if (Validaciones.pinError(placas, menErrorP, "XXX-XXX-XXX", "Llenar el campo de texto", false))
         {
-            if (elm())
+            if (AutoDAO.eliminarAuto(placas.getText()))
             {
                 JOptionPane.showMessageDialog(this, "Se elimino el auto con exito", "Exito", JOptionPane.INFORMATION_MESSAGE);
                 placas.setText("");

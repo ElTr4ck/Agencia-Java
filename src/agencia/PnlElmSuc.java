@@ -5,6 +5,7 @@
  */
 package agencia;
 
+import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
@@ -20,9 +21,10 @@ public class PnlElmSuc extends javax.swing.JPanel
     public PnlElmSuc()
     {
         initComponents();
-        for (int i = 0; i < IntrPrincipal.getSuc().size(); i++)
+        List<Sucursal> sucursalesDisponibles = SucursalDAO.desplegarTodasLasSucursales();
+        for (int i = 0; i < sucursalesDisponibles.size(); i++)
         {
-            mosSuc.addItem(IntrPrincipal.getSuc().get(i));
+            mosSuc.addItem(sucursalesDisponibles.get(i).getNombre());
         }
     }
 
@@ -92,16 +94,23 @@ public class PnlElmSuc extends javax.swing.JPanel
 
     private void btnElmActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnElmActionPerformed
     {//GEN-HEADEREND:event_btnElmActionPerformed
-        if (IntrPrincipal.getSuc().size() > 0)
+        List<Sucursal> sucursalesDisponibles = SucursalDAO.desplegarTodasLasSucursales();
+        if (!sucursalesDisponibles.isEmpty())
         {
-            IntrPrincipal.getSuc().remove(mosSuc.getSelectedIndex());
-            IntrPrincipal.getAut().remove(mosSuc.getSelectedIndex());
-            mosSuc.removeAllItems();
-            JOptionPane.showMessageDialog(this, "Se elimino con exito la sucursal", "Exito", JOptionPane.INFORMATION_MESSAGE);
-            for (int i = 0; i < IntrPrincipal.getSuc().size(); i++)
-            {
-                mosSuc.addItem(IntrPrincipal.getSuc().get(i));
+            if(SucursalDAO.eliminarSucursal(mosSuc.getSelectedItem().toString())){
+                JOptionPane.showMessageDialog(this, "Se elimino con exito la sucursal", "Exito", JOptionPane.INFORMATION_MESSAGE);
+                mosSuc.removeAllItems();
+                sucursalesDisponibles = SucursalDAO.desplegarTodasLasSucursales();
+                for (int i = 0; i < sucursalesDisponibles.size(); i++)
+                {
+                    mosSuc.addItem(sucursalesDisponibles.get(i).getNombre());
+                }
             }
+            else{
+                JOptionPane.showMessageDialog(this, "No se pudo eliminar la sucursal", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            
+           
         } else
         {
             JOptionPane.showMessageDialog(this, "No hay sucursales registradas", "Error", JOptionPane.ERROR_MESSAGE);

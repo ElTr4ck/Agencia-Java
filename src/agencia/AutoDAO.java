@@ -33,7 +33,7 @@ public class AutoDAO {
         }
     }
 
-    public static void eliminarAuto(String placas) {
+    public static boolean eliminarAuto(String placas) {
         try (Connection conexion = ConexBD.obtenerConexion()) {
             String sql = "DELETE FROM Auto WHERE placa = ?";
             try (PreparedStatement statement = conexion.prepareStatement(sql)) {
@@ -41,12 +41,15 @@ public class AutoDAO {
                 int filasAfectadas = statement.executeUpdate();
                 if (filasAfectadas > 0) {
                     System.out.println("Eliminación exitosa. Filas afectadas: " + filasAfectadas);
+                    return true;
                 } else {
                     System.out.println("No se eliminó ninguna fila. Verifica tu sentencia SQL.");
+                    return false;
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
