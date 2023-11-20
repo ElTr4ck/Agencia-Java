@@ -83,4 +83,21 @@ public class SucursalDAO {
             return false;
         }
     }
+    
+    public static int getCantidadSucursales(){
+        int cantidad = 0;
+        try (Connection conexion = ConexBD.obtenerConexion()) {
+            String sql = "SELECT COUNT(*) AS cantidad FROM sucursal";
+            try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+                try(ResultSet resultSet = statement.executeQuery()){
+                    if (resultSet.next()) {
+                        cantidad = resultSet.getInt("cantidad");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return cantidad;
+    }
 }

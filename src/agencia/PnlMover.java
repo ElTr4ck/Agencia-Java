@@ -5,6 +5,8 @@
  */
 package agencia;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
@@ -20,9 +22,10 @@ public class PnlMover extends javax.swing.JPanel
     public PnlMover()
     {
         initComponents();
-        for (int i = 0; i < IntrPrincipal.getSuc().size(); i++)
+        List<Sucursal> sucursalesDisponibles = SucursalDAO.desplegarTodasLasSucursales();
+        for (int i = 0; i < sucursalesDisponibles.size(); i++)
         {
-            mosSucO.addItem(IntrPrincipal.getSuc().get(i));
+            mosSucO.addItem(sucursalesDisponibles.get(i).getNombre());
         }
         mostD();
     }
@@ -135,39 +138,39 @@ public class PnlMover extends javax.swing.JPanel
 
     private void btnMoverActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnMoverActionPerformed
     {//GEN-HEADEREND:event_btnMoverActionPerformed
-        if (IntrPrincipal.getSuc().size() >= 2)
+        List<Auto> autosSucO = AutoDAO.obtenerAutosPorSucursal(SucursalDAO.obtenerSucursalPorNombre(mosSucO.getSelectedItem().toString()).getNombre());
+        int i=0;
+        if (SucursalDAO.getCantidadSucursales() >= 2)
         {
-            if (IntrPrincipal.getAut().get(mosSucO.getSelectedIndex()).size() > 0)
+            if (!autosSucO.isEmpty())
             {
-                for (int i = 0; i < IntrPrincipal.getAut().get(mosSucO.getSelectedIndex()).size(); i++)
+                for (i = 0; i < autosSucO.size(); i++)
                 {
-                    IntrPrincipal.getAut().get(mosSucD.getSelectedIndex() >= mosSucO.getSelectedIndex()
-                            ? mosSucD.getSelectedIndex() + 1 : mosSucD.getSelectedIndex()).
-                            add(IntrPrincipal.getAut().get(mosSucO.getSelectedIndex()).get(i));
+                    if(!AutoDAO.modificarSucursal(mosSucD.getSelectedItem().toString(), autosSucO.get(i).getPlacas())){
+                        JOptionPane.showMessageDialog(this, "Error al mover el auto con placas: " + autosSucO.get(i).getPlacas(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
-                for (int i = IntrPrincipal.getAut().get(mosSucO.getSelectedIndex()).size() - 1; i >= 0; i--)
-                {
-                    IntrPrincipal.getAut().get(mosSucO.getSelectedIndex()).remove(i);
-                }
-            }else
-            {
+            }
+            else{
                 JOptionPane.showMessageDialog(this, mosSucO.getSelectedItem()+" no tiene carros para mover", "Error", JOptionPane.ERROR_MESSAGE);
             }
-        }else 
-        {
+        }
+        else {
             JOptionPane.showMessageDialog(this, "No hay suficientes sucursales registradas", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        if(i == autosSucO.size()){
+            JOptionPane.showMessageDialog(this, "Se han movido los autos correctamente", "Exito", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_btnMoverActionPerformed
 
     private void mostD()
     {
         mosSucD.removeAllItems();
-        for (int i = 0; i < IntrPrincipal.getSuc().size(); i++)
+        List<Sucursal> sucursalesDisponibles = SucursalDAO.desplegarTodasLasSucursales();
+        for (int i = 0; i < sucursalesDisponibles.size(); i++)
         {
-            if (mosSucO.getSelectedIndex() != i)
-            {
-                mosSucD.addItem(IntrPrincipal.getSuc().get(i));
-            }
+            if(!sucursalesDisponibles.get(i).getNombre().equals(mosSucO.getSelectedItem().toString()))
+                mosSucD.addItem(sucursalesDisponibles.get(i).getNombre());
         }
     }
 

@@ -123,4 +123,48 @@ public class AutoDAO {
         }
         return departamento;
     }
+    
+    public static List<Auto> obtenerAutosPorSucursal(String SucurDada){
+        List<Auto> autos = new ArrayList<>();
+        try (Connection conexion = ConexBD.obtenerConexion()) {
+            String sql = "SELECT * FROM Auto WHERE sucursal_nombre = ?";
+            try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+                statement.setString(1, SucurDada);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        String modelo = resultSet.getString("modelo");
+                        int anio = resultSet.getInt("anio");
+                        String placas = resultSet.getString("placa");
+                        Sucursal sucReg = new Sucursal(SucurDada);
+                        Auto auto = new Auto(modelo, anio, placas, sucReg);
+                        autos.add(auto);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return autos;
+    }
+    
+    public static boolean modificarSucursal(String nuevaSuc, String placas){
+        try (Connection conexion = ConexBD.obtenerConexion()) {
+            String sql = "UPDATE auto SET sucursal_nombre = ? WHERE placa = ?";
+            try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+                statement.setString(1, nuevaSuc);
+                statement.setString(2, placas);
+                int filasAfectadas = statement.executeUpdate();
+                if (filasAfectadas > 0) {
+                    System.out.println("Update exitoso. Filas afectadas: " + filasAfectadas);
+                    return true;
+                } else {
+                    System.out.println("No se modifico ninguna fila. Verifica tu sentencia SQL.");
+                    return false;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
