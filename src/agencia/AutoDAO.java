@@ -63,7 +63,6 @@ public class AutoDAO {
                     if (resultSet.next()) {
                         String modelo = resultSet.getString("modelo");
                         int anio = resultSet.getInt("anio");
-                        String color = resultSet.getString("color");
                         String sucursalNombre = resultSet.getString("sucursal_nombre");
                         Sucursal sucReg = new Sucursal(sucursalNombre);
                         auto = new Auto(modelo, anio, placas, sucReg);
@@ -97,5 +96,31 @@ public class AutoDAO {
             e.printStackTrace();
         }
         return autos;
+    }
+    public static String obtenerDepartamentoPorPlacas(String placas){
+        String departamento = "null";
+        try (Connection conexion = ConexBD.obtenerConexion()) {
+            String sql = "SELECT a.placa, " +
+                         "CASE " +
+                         "    WHEN s.auto_placa IS NOT NULL THEN 'Servicio' " +
+                         "    WHEN p.auto_placa IS NOT NULL THEN 'Pintura' " +
+                         "    ELSE 'null'" +
+                         "END AS estado " +
+                         "FROM auto a " +
+                         "LEFT JOIN servicio s ON a.placa = s.auto_placa " +
+                         "LEFT JOIN pintura p ON a.placa = p.auto_placa " +
+                         "WHERE a.placa = ?";
+            try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+                statement.setString(1, placas);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        departamento = resultSet.getNString("estado");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return departamento;
     }
 }

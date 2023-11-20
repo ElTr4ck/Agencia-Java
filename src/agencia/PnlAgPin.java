@@ -386,7 +386,7 @@ public class PnlAgPin extends javax.swing.JPanel
                     JOptionPane.showMessageDialog(this, "No se pudo registrar el auto correctamente");
                 }
                 else{
-                    if(PinturaDAO.guardarPintura(colorA.getText(), auto.getPlacas())){
+                    if(PinturaDAO.guardarPintura(colorA.getText(), auto.getPlacas(), fecha.getText(), fechaSalida.getText())){
                         JOptionPane.showMessageDialog(this, "Se registro con exito el auto y su pintura", "Exito", JOptionPane.INFORMATION_MESSAGE);
                         modAuto.setText("");
                         modAutoFocusLost(null);

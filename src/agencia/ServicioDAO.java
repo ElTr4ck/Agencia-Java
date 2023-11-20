@@ -2,6 +2,7 @@ package agencia;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 
@@ -28,4 +29,59 @@ public class ServicioDAO {
             return false;
         }
     }
+    
+    public static String obtenerTipo(String placas){
+        String tipo = null;
+        try (Connection conexion = ConexBD.obtenerConexion()) {
+            String sql = "SELECT tipo FROM servicio WHERE auto_placa = ?";
+            try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+                statement.setString(1, placas);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        tipo = resultSet.getString("tipo");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return tipo;
+    }
+    
+    public static boolean isPagado(String placas){
+        boolean pagado = false;
+        try (Connection conexion = ConexBD.obtenerConexion()) {
+            String sql = "SELECT pagado FROM servicio WHERE auto_placa = ?";
+            try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+                statement.setString(1, placas);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        pagado = resultSet.getBoolean("pagado");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return pagado;
+    }
+    
+    public static int getPresupuesto(String placas){
+        int presupuesto = 0;
+        try (Connection conexion = ConexBD.obtenerConexion()) {
+            String sql = "SELECT presupuesto FROM servicio WHERE auto_placa = ?";
+            try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+                statement.setString(1, placas);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        presupuesto = resultSet.getInt("presupuesto");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return presupuesto;
+    }
+   
 }

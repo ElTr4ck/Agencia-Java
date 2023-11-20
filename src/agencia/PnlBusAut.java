@@ -7,6 +7,7 @@ package agencia;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.JLabel;
 
 /**
  *
@@ -32,8 +33,7 @@ public class PnlBusAut extends javax.swing.JPanel
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         placas = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
@@ -51,32 +51,24 @@ public class PnlBusAut extends javax.swing.JPanel
         setBackground(new java.awt.Color(226, 222, 219));
 
         placas.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        placas.addFocusListener(new java.awt.event.FocusAdapter()
-        {
-            public void focusGained(java.awt.event.FocusEvent evt)
-            {
+        placas.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
                 placasFocusGained(evt);
             }
-            public void focusLost(java.awt.event.FocusEvent evt)
-            {
+            public void focusLost(java.awt.event.FocusEvent evt) {
                 placasFocusLost(evt);
             }
         });
-        placas.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        placas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 placasActionPerformed(evt);
             }
         });
-        placas.addKeyListener(new java.awt.event.KeyAdapter()
-        {
-            public void keyTyped(java.awt.event.KeyEvent evt)
-            {
+        placas.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
                 placasKeyTyped(evt);
             }
-            public void keyPressed(java.awt.event.KeyEvent evt)
-            {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
                 placasKeyPressed(evt);
             }
         });
@@ -93,9 +85,9 @@ public class PnlBusAut extends javax.swing.JPanel
         departamento.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         departamento.setText("Departamento: ");
 
-        fechaS.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        fechaS.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
 
-        fech_pres.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        fech_pres.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
 
         tipSer_col.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
 
@@ -106,11 +98,9 @@ public class PnlBusAut extends javax.swing.JPanel
         btnBuscar.setText("Buscar");
         btnBuscar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 255), 1, true));
         btnBuscar.setBorderPainted(false);
-        btnBuscar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnBuscar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        btnBuscar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnBuscarActionPerformed(evt);
             }
         });
@@ -202,7 +192,11 @@ public class PnlBusAut extends javax.swing.JPanel
     {//GEN-HEADEREND:event_btnBuscarActionPerformed
         if (Validaciones.pinError(placas, menErrorP, "XXX-XXX-XXX", "Ingresa una placa", false))
         {
-            busca(placas.getText());
+            Auto autoEnc;
+            autoEnc = AutoDAO.obtenerAutoPorPlacas(placas.getText());
+            String depAutoEnc = AutoDAO.obtenerDepartamentoPorPlacas(placas.getText());
+            busca(autoEnc, depAutoEnc);
+            
         }
     }//GEN-LAST:event_btnBuscarActionPerformed
 
@@ -251,40 +245,41 @@ public class PnlBusAut extends javax.swing.JPanel
         }
     }//GEN-LAST:event_placasFocusGained
 
-    private boolean busca(String p)
+    private boolean busca(Auto auto, String depAuto)
     {
-        for (int i = 0; i < IntrPrincipal.getSuc().size(); i++)
-        {
-            for (int j = 0; j < IntrPrincipal.getAut().get(i).size(); j++)
-            {
-                if (((Auto) IntrPrincipal.getAut().get(i).get(j)).getPlacas().equals(p))
-                {
-                    suc.setText("Sucursal: " + IntrPrincipal.getSuc().get(i));
-                    modelo.setText("Modelo: " + ((Auto) IntrPrincipal.getAut().get(i).get(j)).getModelo());
-                    anio.setText("Año: " + ((Auto) IntrPrincipal.getAut().get(i).get(j)).getAnio());
-                    if (IntrPrincipal.getAut().get(i).get(j) instanceof Pintura)
-                    {
-                        departamento.setText("Departamento: " + "Pintura");
-                        fech_pres.setText("Fecha de Ingreso: " + ((Pintura) IntrPrincipal.getAut().get(i).get(j)).getFechaIngreso());
-                        fechaS.setText("Fecha de salida: " + ((Pintura) IntrPrincipal.getAut().get(i).get(j)).getFechaSalida());
-                        tipSer_col.setText("                              Color: " + ((Pintura) IntrPrincipal.getAut().get(i).get(j)).getColor());
-                        pagado.setText("");
-                    }
-                    if (IntrPrincipal.getAut().get(i).get(j) instanceof Servicio)
-                    {
-                        departamento.setText("Departamento: " + "Servicio");
-                        fechaS.setText("");
-                        fech_pres.setText("               Presupuesto: " + ((Servicio) IntrPrincipal.getAut().get(i).get(j)).getPresupuesto());
-                        tipSer_col.setText("Tipo de servicio: " + ((Servicio) IntrPrincipal.getAut().get(i).get(j)).getTipoServicio());
-                        pagado.setText("Pagado: " + ((Servicio) IntrPrincipal.getAut().get(i).get(j)).getPagado()[0]
-                                + ((Servicio) IntrPrincipal.getAut().get(i)
-                                        .get(j)).getPagado()[1]);
-                    }
-                    return true;
-                }
+        if(auto != null){
+            if(depAuto.equals("Pintura")){
+                departamento.setText("Departamento: " + "Pintura");
+                fech_pres.setText("Fecha de Ingreso: " + PinturaDAO.obtenerFechaEntrada(auto.getPlacas()));
+                fechaS.setText("Fecha de salida: " + PinturaDAO.obtenerFechaSalida(auto.getPlacas()));
+                tipSer_col.setText("Color: " + PinturaDAO.obtenerPintura(auto.getPlacas()));
+                tipSer_col.setHorizontalAlignment(JLabel.CENTER);
+                pagado.setText("");
+                suc.setText("Sucursal: " + auto.getSucursal().getNombre());
+                modelo.setText("Modelo: " + auto.getModelo());
+                anio.setText("Año: " + auto.getAnio());
+                return true;
+            }
+            else if(depAuto.equals("Servicio")){
+                departamento.setText("Departamento: " + "Servicio");
+                fechaS.setText("");
+                fech_pres.setText("Presupuesto: " + ServicioDAO.getPresupuesto(auto.getPlacas()));
+                fech_pres.setHorizontalAlignment(JLabel.CENTER);
+                tipSer_col.setText("Tipo de servicio: " + ServicioDAO.obtenerTipo(auto.getPlacas()));
+                String pagadito = (ServicioDAO.isPagado(auto.getPlacas())) ? "SI" : "NO";
+                pagado.setText("Pagado: " + pagadito);
+                suc.setText("Sucursal: " + auto.getSucursal().getNombre());
+                modelo.setText("Modelo: " + auto.getModelo());
+                anio.setText("Año: " + auto.getAnio());
+                return true;
+            }
+            else{
+                JOptionPane.showMessageDialog(this, "No se encontro", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-        JOptionPane.showMessageDialog(this, "No se encontro", "Error", JOptionPane.ERROR_MESSAGE);
+        else{
+            JOptionPane.showMessageDialog(this, "No se encontro", "Error", JOptionPane.ERROR_MESSAGE);
+        }
         return false;
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
